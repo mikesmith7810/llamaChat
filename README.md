@@ -2,6 +2,9 @@
 
 A professional Claude.ai-style chat UI for locally running Ollama models.
 
+<img width="1781" height="1183" alt="image" src="https://github.com/user-attachments/assets/66452bd5-4300-48c6-9e81-0283f18c7f3a" />
+
+
 ## Features
 
 - Streaming responses with real-time token display
