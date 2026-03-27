@@ -17,7 +17,7 @@ export function InputBar({ onSend, onStop, isStreaming, disabled }: InputBarProp
     const el = textareaRef.current
     if (!el) return
     el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 160)}px`
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`
   }
 
   const handleSend = useCallback(() => {
@@ -38,16 +38,16 @@ export function InputBar({ onSend, onStop, isStreaming, disabled }: InputBarProp
   }
 
   return (
-    <div className="border-t border-border bg-background px-4 py-3">
-      <div className="flex items-end gap-2">
+    <div className="border-t border-border bg-background px-4 pb-6 pt-4">
+      <div className="mx-auto flex w-full max-w-[1200px] items-end gap-3">
         <Textarea
           ref={textareaRef}
-          rows={1}
+          rows={3}
           placeholder={disabled ? 'No model selected — start Ollama and refresh' : 'Message… (Enter to send, Shift+Enter for newline)'}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
           disabled={isStreaming || disabled}
-          className="max-h-40 min-h-[40px] flex-1 resize-none overflow-y-auto"
+          className="max-h-60 min-h-[80px] flex-1 resize-none overflow-y-auto"
         />
         {isStreaming ? (
           <Button

@@ -26,7 +26,7 @@ export function ChatContainer({ messages, streamingContent, isStreaming }: ChatC
           <p className="text-sm">Select a model and start chatting</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-1 py-4">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-1 py-4">
           {messages.map((message) => (
             <MessageBubble key={message.id} message={message} />
           ))}
