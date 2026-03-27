@@ -25,52 +25,51 @@ export function useChat(selectedModel: string) {
         timestamp: new Date(),
       }
 
-      setMessages((prev) => {
-        const updated = [...prev, userMessage]
-        const history: OllamaMessage[] = updated.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
+      // Build history outside the state updater so streamChat is never
+      // called inside a setter (which React StrictMode invokes twice).
+      const history: OllamaMessage[] = [...messages, userMessage].map((m) => ({
+        role: m.role,
+        content: m.content,
+      }))
 
-        const controller = new AbortController()
-        abortControllerRef.current = controller
-        setIsStreaming(true)
-        setStreamingContent('')
+      setMessages((prev) => [...prev, userMessage])
 
-        let accumulated = ''
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+      setIsStreaming(true)
+      setStreamingContent('')
 
-        streamChat(
-          selectedModel,
-          history,
-          (token) => {
-            accumulated += token
-            setStreamingContent(accumulated)
-          },
-          () => {
-            const assistantMessage: ChatMessage = {
-              id: makeId(),
-              role: 'assistant',
-              content: accumulated,
-              timestamp: new Date(),
-            }
-            setMessages((prev) => [...prev, assistantMessage])
-            setStreamingContent('')
-            setIsStreaming(false)
-            abortControllerRef.current = null
-          },
-          (err) => {
-            setError(err.message)
-            setIsStreaming(false)
-            setStreamingContent('')
-            abortControllerRef.current = null
-          },
-          controller.signal,
-        )
+      let accumulated = ''
 
-        return updated
-      })
+      streamChat(
+        selectedModel,
+        history,
+        (token) => {
+          accumulated += token
+          setStreamingContent(accumulated)
+        },
+        () => {
+          const assistantMessage: ChatMessage = {
+            id: makeId(),
+            role: 'assistant',
+            content: accumulated,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, assistantMessage])
+          setStreamingContent('')
+          setIsStreaming(false)
+          abortControllerRef.current = null
+        },
+        (err) => {
+          setError(err.message)
+          setIsStreaming(false)
+          setStreamingContent('')
+          abortControllerRef.current = null
+        },
+        controller.signal,
+      )
     },
-    [isStreaming, selectedModel],
+    [isStreaming, selectedModel, messages],
   )
 
   const stopStreaming = useCallback(() => {
